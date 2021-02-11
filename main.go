@@ -2,34 +2,13 @@ package main
 
 import (
 	"fmt"
-	//"os"
+	"os"
 
 	"github.com/goki/ki/ki"
+	"github.com/goki/ki/kit"
 )
 
-type EmptyRoot struct {
-	ki.Node
-}
-
-func (r *EmptyRoot) AddUser(u *User) error {
-	c := r.ChildByName(u.Name(), -1)
-	if c != nil {
-		return fmt.Errorf("The same name user already exists.")
-	}
-
-	for _, child := range *(r.Children()) {
-		if child.(*User).NominatorId == u.Name() {
-			ki.MoveToParent(child, u)
-			break
-		}
-	}
-
-	nominatorOfUser := r.ChildByName(u.NominatorId, -1)
-	if nominatorOfUser == nil {
-		return r.AddChild(u)
-	}
-	return nominatorOfUser.AddChild(u)
-}
+var KiT_TypeName = kit.Types.AddType(&User{}, nil)
 
 type User struct {
 	ki.Node
@@ -41,8 +20,28 @@ type User struct {
 	InstagramId string
 }
 
-func newEmptyRoot() *EmptyRoot {
-	e := EmptyRoot{}
+func (root *User) AddUser(u *User) error {
+	c := root.ChildByName(u.Name(), -1)
+	if c != nil {
+		return fmt.Errorf("The same name user already exists.")
+	}
+
+	for _, child := range *(root.Children()) {
+		if child.(*User).NominatorId == u.Name() {
+			ki.MoveToParent(child, u)
+			break
+		}
+	}
+
+	nominatorOfUser := root.ChildByName(u.NominatorId, -1)
+	if nominatorOfUser == nil {
+		return root.AddChild(u)
+	}
+	return nominatorOfUser.AddChild(u)
+}
+
+func newEmptyRoot() *User {
+	e := User{}
 	e.InitName(&e, "EmptyRoot")
 	return &e
 }
@@ -83,19 +82,34 @@ func readInputString(message string, required bool) string {
 }
 
 func main() {
-	filename := "clubtree.json"
-	root := newEmptyRoot()
-
-	newUserId := "user"
-	newNominatorId := "nominator"
-
-	user := newDummyUser(newUserId, newNominatorId)
-	nominator := newDummyUser("nominator", "nominators-nominator")
-
-	_ = root.AddUser(user)
-	_ = root.AddUser(nominator)
-
-	if err := root.SaveJSON(filename); err != nil {
+	oldFilename := "clubtree.json"
+	newFilename := "new-clubtree.json"
+	root, err := readJson(oldFilename)
+	if err != nil {
 		panic(err)
 	}
+
+	newUserId := "newuser"
+	newNominatorId := "olduser"
+
+	user := newDummyUser(newUserId, newNominatorId)
+
+	_ = root.AddUser(user)
+
+	if err := root.SaveJSON(newFilename); err != nil {
+		panic(err)
+	}
+}
+
+func readJson(filename string) (*User, error) {
+	f, err := os.Open(filename)
+	if err != nil {
+		return &User{}, err
+	}
+	defer f.Close()
+	root := newEmptyRoot()
+	if err := root.ReadJSON(f); err != nil {
+		return &User{}, err
+	}
+	return root, nil
 }
