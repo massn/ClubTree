@@ -6,7 +6,9 @@ import (
 )
 
 var (
-	addCmd = &cobra.Command{
+	jsonTreePath        string
+	defaultJsonTreePath = "clubtree.json"
+	addCmd              = &cobra.Command{
 		Use:   "add",
 		Short: "add a new user",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -16,13 +18,12 @@ var (
 )
 
 func init() {
+	addCmd.PersistentFlags().StringVarP(&jsonTreePath, "json", "j", defaultJsonTreePath, "Input JSON tree path")
 	rootCmd.AddCommand(addCmd)
 }
 
 func addUser() {
-	oldFilename := "clubtree.json"
-	newFilename := "new-clubtree.json"
-	root, err := tree.ReadJson(oldFilename)
+	root, err := tree.ReadJson(jsonTreePath)
 	if err != nil {
 		panic(err)
 	}
@@ -34,7 +35,7 @@ func addUser() {
 
 	_ = root.AddUser(user)
 
-	if err := root.SaveJSON(newFilename); err != nil {
+	if err := root.SaveJSON(jsonTreePath); err != nil {
 		panic(err)
 	}
 }
