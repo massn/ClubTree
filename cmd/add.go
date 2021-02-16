@@ -3,12 +3,11 @@ package cmd
 import (
 	"github.com/massn/ClubTree/pkg/tree"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var (
-	jsonTreePath        string
-	defaultJsonTreePath = "clubtree.json"
-	addCmd              = &cobra.Command{
+	addCmd = &cobra.Command{
 		Use:   "add",
 		Short: "add a new user",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -18,21 +17,22 @@ var (
 )
 
 func init() {
-	addCmd.PersistentFlags().StringVarP(&jsonTreePath, "json", "j", defaultJsonTreePath, "Input JSON tree path")
 	rootCmd.AddCommand(addCmd)
 }
 
 func addUser() {
-	root, err := tree.ReadJson(jsonTreePath)
-	if err != nil {
-		panic(err)
+	_, err := os.Stat(jsonTreePath)
+	var root *tree.User
+	if err == nil {
+		root, err = tree.ReadJson(jsonTreePath)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		root = tree.NewEmptyRoot()
 	}
 
-	newUserId := "newuser"
-	newNominatorId := "olduser"
-
-	user := tree.NewDummyUser(newUserId, newNominatorId)
-
+	user := tree.NewUser()
 	_ = root.AddUser(user)
 
 	if err := root.SaveJSON(jsonTreePath); err != nil {

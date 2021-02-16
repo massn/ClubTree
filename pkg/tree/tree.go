@@ -13,6 +13,7 @@ var KiT_TypeName = kit.Types.AddType(&User{}, nil)
 type User struct {
 	ki.Node
 	ClubhouseId string
+	Alias       string
 	NominatorId string
 	FirstName   string
 	LastName    string
@@ -59,11 +60,12 @@ func NewUser() *User {
 	u := User{}
 	u.InitName(&u, clubhouseId)
 	u.ClubhouseId = clubhouseId
-	u.NominatorId = readInputString("Enter the nominator ID", true)
+	u.Alias = readInputString("Enter the alias", false)
 	u.FirstName = readInputString("Enter the first name", true)
 	u.LastName = readInputString("Enter the last name", true)
 	u.TwitterId = readInputString("Enter the Twitter ID", false)
 	u.InstagramId = readInputString("Enter the Instagram ID", false)
+	u.NominatorId = readInputString("Enter the nominator ID", true)
 	return &u
 }
 
