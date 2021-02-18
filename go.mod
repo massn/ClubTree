@@ -7,4 +7,5 @@ require (
 	github.com/go-echarts/go-echarts/v2 v2.2.3
 	github.com/goki/ki v1.1.1
 	github.com/spf13/cobra v1.1.3
+	github.com/stretchr/testify v1.6.0
 )
