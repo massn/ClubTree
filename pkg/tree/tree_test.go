@@ -35,8 +35,8 @@ func makeTestClubTree(tu TestUsers) (*User, error) {
 
 func makeTestUsers() TestUsers {
 	return TestUsers{
-		Max:    makeTestUser("max", "Max", "Planck", ""),
-		Paul:   makeTestUser("paul", "Paul", "Dirac", ""),
+		Max:    makeTestUser("max", "Max", "Planck", "gustav"),
+		Paul:   makeTestUser("paul", "Paul", "Dirac", "ralph"),
 		Niels:  makeTestUser("niels", "Niels", "Bohr", "max"),
 		Werner: makeTestUser("werner", "Werner", "Heisenberg", "niels"),
 		Erwin:  makeTestUser("erwin", "Erwin", "Schrodinger", "niels"),
