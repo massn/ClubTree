@@ -65,7 +65,7 @@ func NewUser() *User {
 	u.LastName = readInputString("Enter the last name", true)
 	u.TwitterId = readInputString("Enter the Twitter ID", false)
 	u.InstagramId = readInputString("Enter the Instagram ID", false)
-	u.NominatorId = readInputString("Enter the nominator ID", true)
+	u.NominatorId = readInputString("Enter the nominator ID", false)
 	return &u
 }
 
