@@ -1,0 +1,95 @@
+{"ki.RootType": "tree.User"}
+{
+  "Nm": "EmptyRoot",
+  "Props": null,
+  "Kids": [
+    {
+      "n": 2,
+      "type": "tree.User",
+      "name": "max",
+      "type": "tree.User",
+      "name": "paul"
+    },
+    {
+      "Nm": "max",
+      "Props": null,
+      "Kids": [
+        {
+          "n": 1,
+          "type": "tree.User",
+          "name": "niels"
+        },
+        {
+          "Nm": "niels",
+          "Props": null,
+          "Kids": [
+            {
+              "n": 2,
+              "type": "tree.User",
+              "name": "werner",
+              "type": "tree.User",
+              "name": "erwin"
+            },
+            {
+              "Nm": "werner",
+              "Props": null,
+              "Kids": null,
+              "ClubhouseId": "werner",
+              "Alias": "",
+              "NominatorId": "niels",
+              "FirstName": "Werner",
+              "LastName": "Heisenberg",
+              "TwitterId": "",
+              "InstagramId": ""
+            },
+            {
+              "Nm": "erwin",
+              "Props": null,
+              "Kids": null,
+              "ClubhouseId": "erwin",
+              "Alias": "",
+              "NominatorId": "niels",
+              "FirstName": "Erwin",
+              "LastName": "Schrodinger",
+              "TwitterId": "",
+              "InstagramId": ""
+            }
+          ],
+          "ClubhouseId": "niels",
+          "Alias": "",
+          "NominatorId": "max",
+          "FirstName": "Niels",
+          "LastName": "Bohr",
+          "TwitterId": "",
+          "InstagramId": ""
+        }
+      ],
+      "ClubhouseId": "max",
+      "Alias": "",
+      "NominatorId": "",
+      "FirstName": "Max",
+      "LastName": "Planck",
+      "TwitterId": "",
+      "InstagramId": ""
+    },
+    {
+      "Nm": "paul",
+      "Props": null,
+      "Kids": null,
+      "ClubhouseId": "paul",
+      "Alias": "",
+      "NominatorId": "",
+      "FirstName": "Paul",
+      "LastName": "Dirac",
+      "TwitterId": "",
+      "InstagramId": ""
+    }
+  ],
+  "ClubhouseId": "",
+  "Alias": "",
+  "NominatorId": "",
+  "FirstName": "",
+  "LastName": "",
+  "TwitterId": "",
+  "InstagramId": ""
+}
