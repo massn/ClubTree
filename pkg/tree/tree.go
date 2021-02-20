@@ -10,6 +10,11 @@ import (
 
 var KiT_TypeName = kit.Types.AddType(&User{}, nil)
 
+type ClubTree struct {
+	Name string
+	Tree *User // Root User
+}
+
 type User struct {
 	ki.Node
 	ClubhouseId string
@@ -21,30 +26,48 @@ type User struct {
 	InstagramId string
 }
 
-func (root *User) AddUser(u *User) error {
+func NewClubTree(name string) *ClubTree {
+	e := User{}
+	e.InitName(&e, "EmptyRoot")
+	return &ClubTree{
+		Name: name,
+		Tree: &e,
+	}
+}
+
+func (ct *ClubTree) AddUser(u *User) error {
+	root := ct.Tree
 	c := root.ChildByName(u.Name(), -1)
 	if c != nil {
 		return fmt.Errorf("The same name user already exists.")
 	}
 
-	for _, child := range *(root.Children()) {
-		if child.(*User).NominatorId == u.Name() {
+	connectedToChild := false
+	for _, child := range getAllChildren(root) {
+		if u.ClubhouseId == child.NominatorId {
 			ki.MoveToParent(child, u)
-			break
+		}
+		if u.NominatorId == child.ClubhouseId {
+			err := child.AddChild(u)
+			if err != nil {
+				return err
+			}
+			connectedToChild = true
 		}
 	}
 
-	nominatorOfUser := root.ChildByName(u.NominatorId, -1)
-	if nominatorOfUser == nil {
+	if !connectedToChild {
 		return root.AddChild(u)
 	}
-	return nominatorOfUser.AddChild(u)
+	return nil
 }
 
-func NewEmptyRoot() *User {
-	e := User{}
-	e.InitName(&e, "EmptyRoot")
-	return &e
+func getAllChildren(root *User) []*User {
+	children := []*User{root}
+	for _, c := range *(root.Children()) {
+		children = append(children, getAllChildren(c.(*User))...)
+	}
+	return children
 }
 
 func NewDummyUser(id, nominatorId string) *User {
@@ -83,15 +106,15 @@ func readInputString(message string, required bool) string {
 	return input
 }
 
-func ReadJson(filename string) (*User, error) {
+func ReadJson(filename string) (*ClubTree, error) {
 	f, err := os.Open(filename)
 	if err != nil {
-		return &User{}, err
+		return &ClubTree{}, err
 	}
 	defer f.Close()
-	root := NewEmptyRoot()
-	if err := root.ReadJSON(f); err != nil {
-		return &User{}, err
+	ct := NewClubTree(filename)
+	if err := ct.Tree.ReadJSON(f); err != nil {
+		return &ClubTree{}, err
 	}
-	return root, nil
+	return ct, nil
 }

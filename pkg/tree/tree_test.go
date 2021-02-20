@@ -14,24 +14,24 @@ type TestUsers struct {
 	Albert *User
 }
 
-func makeTestClubTree(tu TestUsers) (*User, error) {
-	r := NewEmptyRoot()
-	if err := r.AddUser(tu.Max); err != nil {
-		return &User{}, err
+func makeTestClubTree(tu TestUsers) (*ClubTree, error) {
+	ct := NewClubTree("test_club_tree")
+	if err := ct.AddUser(tu.Max); err != nil {
+		return &ClubTree{}, err
 	}
-	if err := r.AddUser(tu.Paul); err != nil {
-		return &User{}, err
+	if err := ct.AddUser(tu.Paul); err != nil {
+		return &ClubTree{}, err
 	}
-	if err := tu.Max.AddUser(tu.Niels); err != nil {
-		return &User{}, err
+	if err := ct.AddUser(tu.Niels); err != nil {
+		return &ClubTree{}, err
 	}
-	if err := tu.Niels.AddUser(tu.Werner); err != nil {
-		return &User{}, err
+	if err := ct.AddUser(tu.Werner); err != nil {
+		return &ClubTree{}, err
 	}
-	if err := tu.Niels.AddUser(tu.Erwin); err != nil {
-		return &User{}, err
+	if err := ct.AddUser(tu.Erwin); err != nil {
+		return &ClubTree{}, err
 	}
-	return r, nil
+	return ct, nil
 }
 
 func makeTestUsers() TestUsers {
@@ -58,7 +58,7 @@ func makeTestUser(clubhouseId, firstName, lastName, nominatorId string) *User {
 type CreateTreeTestSuite struct {
 	suite.Suite
 	TestUsers
-	root *User
+	clubTree *ClubTree
 }
 
 func (suite *CreateTreeTestSuite) SetupTest() {
@@ -67,47 +67,47 @@ func (suite *CreateTreeTestSuite) SetupTest() {
 	if err != nil {
 		panic(err)
 	}
-	suite.root = r
+	suite.clubTree = r
 }
 
 func TestCreateTreeSuite(t *testing.T) {
 	suite.Run(t, new(CreateTreeTestSuite))
 }
 
-func (suite *CreateTreeTestSuite) TestRootKids() {
-	ks := suite.root.Kids
-	suite.Assertions.Equal(len(ks), 2)
-	suite.Assertions.Contains(ks, suite.TestUsers.Max)
-	suite.Assertions.Contains(ks, suite.TestUsers.Paul)
+func (suite *CreateTreeTestSuite) TestRootChildren() {
+	ks := suite.clubTree.Tree.Children()
+	suite.Assertions.Equal(len(*ks), 2)
+	suite.Assertions.Contains(*ks, suite.TestUsers.Max)
+	suite.Assertions.Contains(*ks, suite.TestUsers.Paul)
 }
 
-func (suite *CreateTreeTestSuite) TestKidsOfMax() {
-	ks := suite.TestUsers.Max.Kids
-	suite.Assertions.Equal(len(ks), 1)
-	suite.Assertions.Contains(ks, suite.TestUsers.Niels)
+func (suite *CreateTreeTestSuite) TestChildrenOfMax() {
+	ks := suite.TestUsers.Max.Children()
+	suite.Assertions.Equal(len(*ks), 1)
+	suite.Assertions.Contains(*ks, suite.TestUsers.Niels)
 }
 
-func (suite *CreateTreeTestSuite) TestKidsOfNiels() {
-	ks := suite.TestUsers.Niels.Kids
-	suite.Assertions.Equal(len(ks), 2)
-	suite.Assertions.Contains(ks, suite.TestUsers.Werner)
-	suite.Assertions.Contains(ks, suite.TestUsers.Erwin)
+func (suite *CreateTreeTestSuite) TestChildrenOfNiels() {
+	ks := suite.TestUsers.Niels.Children()
+	suite.Assertions.Equal(len(*ks), 2)
+	suite.Assertions.Contains(*ks, suite.TestUsers.Werner)
+	suite.Assertions.Contains(*ks, suite.TestUsers.Erwin)
 }
 
-func (suite *CreateTreeTestSuite) TestKidsOfWerner() {
-	ks := suite.TestUsers.Werner.Kids
-	suite.Assertions.Equal(len(ks), 0)
+func (suite *CreateTreeTestSuite) TestChildrenOfWerner() {
+	ks := suite.TestUsers.Werner.Children()
+	suite.Assertions.Equal(len(*ks), 0)
 }
 
-func (suite *CreateTreeTestSuite) TestKidsOfErwin() {
-	ks := suite.TestUsers.Erwin.Kids
-	suite.Assertions.Equal(len(ks), 0)
+func (suite *CreateTreeTestSuite) TestChildrenOfErwin() {
+	ks := suite.TestUsers.Erwin.Children()
+	suite.Assertions.Equal(len(*ks), 0)
 }
 
 type AddTreeTestSuite struct {
 	suite.Suite
 	TestUsers
-	root *User
+	clubTree *ClubTree
 }
 
 func (suite *AddTreeTestSuite) SetupTest() {
@@ -116,7 +116,7 @@ func (suite *AddTreeTestSuite) SetupTest() {
 	if err != nil {
 		panic(err)
 	}
-	suite.root = r
+	suite.clubTree = r
 }
 
 func TestAddTreeSuite(t *testing.T) {
@@ -124,35 +124,37 @@ func TestAddTreeSuite(t *testing.T) {
 }
 
 func (suite *AddTreeTestSuite) TestAddToRoot() {
-	err := suite.root.AddUser(suite.TestUsers.Albert)
+	err := suite.clubTree.AddUser(suite.TestUsers.Albert)
 	suite.Assertions.Nil(err)
-	ks := suite.root.Kids
-	suite.Assertions.Equal(len(ks), 3)
-	suite.Assertions.Contains(ks, suite.TestUsers.Albert)
+	ks := suite.clubTree.Tree.Children()
+	suite.Assertions.Equal(len(*ks), 3)
+	suite.Assertions.Contains(*ks, suite.TestUsers.Albert)
 }
 
 func (suite *AddTreeTestSuite) TestAddToPaul() {
-	err := suite.TestUsers.Paul.AddUser(suite.TestUsers.Albert)
+	suite.TestUsers.Albert.NominatorId = "paul"
+	err := suite.clubTree.AddUser(suite.TestUsers.Albert)
 	suite.Assertions.Nil(err)
-	ks := suite.root.Kids
-	suite.Assertions.Equal(len(ks), 2)
-	paulKids := suite.TestUsers.Paul.Kids
-	suite.Assertions.Equal(len(paulKids), 1)
-	suite.Assertions.Contains(paulKids, suite.TestUsers.Albert)
+	ks := suite.clubTree.Tree.Children()
+	suite.Assertions.Equal(len(*ks), 2)
+	paulChildren := suite.TestUsers.Paul.Children()
+	suite.Assertions.Equal(len(*paulChildren), 1)
+	suite.Assertions.Contains(*paulChildren, suite.TestUsers.Albert)
 }
 
 func (suite *AddTreeTestSuite) TestAddToErwin() {
-	err := suite.TestUsers.Erwin.AddUser(suite.TestUsers.Albert)
+	suite.TestUsers.Albert.NominatorId = "erwin"
+	err := suite.clubTree.AddUser(suite.TestUsers.Albert)
 	suite.Assertions.Nil(err)
-	ks := suite.root.Kids
-	suite.Assertions.Equal(len(ks), 2)
-	maxKids := suite.TestUsers.Max.Kids
-	suite.Assertions.Equal(len(maxKids), 1)
-	nielsKids := suite.TestUsers.Niels.Kids
-	suite.Assertions.Equal(len(nielsKids), 2)
-	wernerKids := suite.TestUsers.Werner.Kids
-	suite.Assertions.Equal(len(wernerKids), 0)
-	erwinKids := suite.TestUsers.Erwin.Kids
-	suite.Assertions.Equal(len(erwinKids), 1)
-	suite.Assertions.Contains(erwinKids, suite.TestUsers.Albert)
+	ks := suite.clubTree.Tree.Children()
+	suite.Assertions.Equal(len(*ks), 2)
+	maxChildren := suite.TestUsers.Max.Children()
+	suite.Assertions.Equal(len(*maxChildren), 1)
+	nielsChildren := suite.TestUsers.Niels.Children()
+	suite.Assertions.Equal(len(*nielsChildren), 2)
+	wernerChildren := suite.TestUsers.Werner.Children()
+	suite.Assertions.Equal(len(*wernerChildren), 0)
+	erwinChildren := suite.TestUsers.Erwin.Children()
+	suite.Assertions.Equal(len(*erwinChildren), 1)
+	suite.Assertions.Contains(*erwinChildren, suite.TestUsers.Albert)
 }

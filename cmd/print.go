@@ -20,9 +20,9 @@ func init() {
 }
 
 func print() {
-	root, err := tree.ReadJson(jsonTreePath)
+	ct, err := tree.ReadJson(jsonTreePath)
 	if err != nil {
 		panic(err)
 	}
-	root.Print()
+	ct.Tree.Print()
 }

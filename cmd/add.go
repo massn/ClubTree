@@ -22,20 +22,20 @@ func init() {
 
 func addUser() {
 	_, err := os.Stat(jsonTreePath)
-	var root *tree.User
+	var ct *tree.ClubTree
 	if err == nil {
-		root, err = tree.ReadJson(jsonTreePath)
+		ct, err = tree.ReadJson(jsonTreePath)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		root = tree.NewEmptyRoot()
+		ct = tree.NewClubTree("New ClubTree")
 	}
 
 	user := tree.NewUser()
-	_ = root.AddUser(user)
+	_ = ct.AddUser(user)
 
-	if err := root.SaveJSON(jsonTreePath); err != nil {
+	if err := ct.Tree.SaveJSON(jsonTreePath); err != nil {
 		panic(err)
 	}
 }
