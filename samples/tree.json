@@ -4,13 +4,11 @@
   "Props": null,
   "Kids": [
     {
-      "n": 3,
+      "n": 2,
       "type": "tree.User",
       "name": "max",
       "type": "tree.User",
-      "name": "paul",
-      "type": "tree.User",
-      "name": "einstein"
+      "name": "paul"
     },
     {
       "Nm": "max",
@@ -83,18 +81,6 @@
       "NominatorId": "ralph",
       "FirstName": "Paul",
       "LastName": "Dirac",
-      "TwitterId": "",
-      "InstagramId": ""
-    },
-    {
-      "Nm": "einstein",
-      "Props": null,
-      "Kids": null,
-      "ClubhouseId": "einstein",
-      "Alias": "",
-      "NominatorId": "alfred",
-      "FirstName": "Albert",
-      "LastName": "Einstein",
       "TwitterId": "",
       "InstagramId": ""
     }
